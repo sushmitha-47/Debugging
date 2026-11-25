@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CampusCafe Complete Bug-Fix Report</title>
+<style>
+@page { size: A4; margin: 0.75in; }
+body { font-family: 'Times New Roman', serif; font-size: 11pt; line-height: 1.38; color: #1f2937; }
+h1 { font-size: 22pt; color: #92400e; text-align: center; margin: 0 0 18pt 0; }
+h2 { font-size: 16pt; color: #92400e; border-bottom: 1px solid #d97706; padding-bottom: 4pt; margin-top: 18pt; }
+h3 { font-size: 12pt; color: #92400e; margin-top: 14pt; }
+p { margin: 5pt 0 8pt 0; }
+table { width: 100%; border-collapse: collapse; margin: 8pt 0 14pt 0; }
+th { background: #fef3c7; color: #92400e; }
+th, td { border: 1px solid #d1d5db; padding: 6pt; vertical-align: top; }
+code, pre { font-family: Consolas, monospace; font-size: 9pt; }
+pre { background: #f8fafc; border: 1px solid #d1d5db; padding: 8pt; white-space: pre-wrap; }
+.cover { text-align: center; padding-top: 110pt; }
+.subtitle { color: #6b7280; font-size: 13pt; }
+.section { page-break-before: always; }
+.small { font-size: 9pt; color: #6b7280; }
+ul { margin-top: 4pt; }
+</style>
+</head>
+<body>
+<div class="cover">
+<h1>CampusCafe<br>Complete Bug-Fix Report</h1>
+<p class="subtitle">Technical Documentation of Identified Defects and Corrections</p>
+<p><strong>Project:</strong> CampusCafe Student Order Portal</p>
+<p><strong>Technologies:</strong> HTML, CSS, JavaScript, Browser Local Storage</p>
+<p><strong>AI-Assisted Development Tool:</strong> GitHub Copilot</p>
+<p><strong>Submission Date:</strong> November 25, 2026</p>
+</div>
+
+<h2>1. Project Introduction</h2>
+<p>CampusCafe is a two-page client-side web application for browsing cafeteria menu items, building a shopping cart, and confirming a student order. The application uses HTML, CSS, and JavaScript with browser <code>localStorage</code> for retaining cart state between pages.</p>
+
+<h3>1.1 Project Structure</h3>
+<table>
+<tr><th>Path</th><th>Purpose</th></tr>
+<tr><td><code>index.html</code></td><td>Menu page, category and search filtering, and cart interface.</td></tr>
+<tr><td><code>pages/checkout.html</code></td><td>Order summary, promotion, student details, and order confirmation.</td></tr>
+<tr><td><code>scripts/app.js</code></td><td>Menu rendering, cart state, quantity controls, filters, and checkout navigation.</td></tr>
+<tr><td><code>scripts/checkout.js</code></td><td>Checkout totals, promotion, validation, and confirmation.</td></tr>
+<tr><td><code>scripts/menuData.js</code></td><td>Menu item data and icon paths.</td></tr>
+<tr><td><code>styles/main.css</code></td><td>Application layout and component styles.</td></tr>
+<tr><td><code>styles/theme.css</code></td><td>Theme variables and page background.</td></tr>
+<tr><td><code>assets/icons/</code></td><td>SVG icons for coffee, sandwich, muffin, and juice.</td></tr>
+<tr><td><code>assets/bg-pattern.svg</code></td><td>Repeating page background asset.</td></tr>
+</table>
+<p>The project is primarily vanilla JavaScript. No package manifest, automated test suite, or build system was present in the workspace.</p>
+
+<h2 class="section">2. Scope and Methodology</h2>
+<p>GitHub Copilot was used as an AI-assisted coding tool to analyze the fixed workspace, identify broken paths and TODO sections, implement corrections, and validate behavior in a browser. Source files were preserved; this document contains the technical report only.</p>
+<p>The work covered resource paths, script loading order, repeated add-to-cart actions, numeric calculations, shared cart persistence, category and name filtering, quantity controls, empty-cart blocking, student promotion logic, and order confirmation validation.</p>
+<p><strong>History limitation:</strong> The available terminal could not start because of a Winpty/ConPTY backend error. Independent Git history retrieval was therefore unavailable. Original snippets below are based on the original source snapshot captured during the fix session, while other items are based on the project README and source TODO markers. This limitation is stated explicitly rather than fabricated.</p>
+
+<h2 class="section">3. Detailed Bug Analysis</h2>
+
+<h3>Bug 1: Incorrect Home Page Stylesheet Path</h3>
+<p><strong>File and location:</strong> <code>index.html:6</code></p>
+<table>
+<tr><th>Previous Code</th><th>Corrected Code</th></tr>
+<tr><td><code>&lt;link rel="stylesheet" href="css/main.css" /&gt;</code></td><td><code>&lt;link rel="stylesheet" href="styles/main.css" /&gt;</code></td></tr>
+</table>
+<p><strong>Cause:</strong> The stylesheet was referenced through a nonexistent <code>css/</code> directory instead of the existing <code>styles/</code> directory.</p>
+<p><strong>Effect:</strong> The home page could not load its main layout and component styles.</p>
+<p><strong>Correction:</strong> The link was changed to the actual stylesheet path.</p>
+<p><strong>Result:</strong> Menu, cart, grid, button, and summary styles are applied correctly.</p>
+
+<h3>Bug 2: Incorrect Checkout Resource and Navigation Paths</h3>
+<p><strong>Files:</strong> <code>pages/checkout.html:6-7, 13, 61</code></p>
+<p>The checkout page is located inside the <code>pages/</code> directory. CSS, JavaScript, and navigation paths therefore require <code>../</code> to resolve to project-root files.</p>
+<table>
+<tr><th>Area</th><th>Previous</th><th>Fixed</th></tr>
+<tr><td>Stylesheets</td><td><code>styles/main.css</code>, <code>styles/theme.css</code></td><td><code>../styles/main.css</code>, <code>../styles/theme.css</code></td></tr>
+<tr><td>Back link</td><td><code>index.html</code></td><td><code>../index.html</code></td></tr>
+<tr><td>Script</td><td><code>scripts/checkout.js</code></td><td><code>../scripts/checkout.js</code></td></tr>
+</table>
+<p><strong>Result:</strong> Checkout styles, navigation, and behavior now load from their correct locations.</p>
+
+<h3>Bug 3: Incorrect Theme Background Path</h3>
+<p><strong>File:</strong> <code>styles/theme.css:15</code></p>
+<table>
+<tr><th>Previous Code</th><th>Corrected Code</th></tr>
+<tr><td><code>url("assets/bg-pattern.svg")</code></td><td><code>url("../assets/bg-pattern.svg")</code></td></tr>
+</table>
+<p>The original CSS path resolved relative to <code>styles/</code> and therefore pointed toward a nonexistent <code>styles/assets/</code> location. The parent-directory path now resolves the existing root asset.</p>
+
+<h3>Bug 4: Incorrect Menu Icon Paths</h3>
+<p><strong>File:</strong> <code>scripts/menuData.js:1-32</code></p>
+<table>
+<tr><th>Product</th><th>Previous Path</th><th>Corrected Path</th></tr>
+<tr><td>Cold Brew Coffee</td><td><code>images/coffee-cup.svg</code></td><td><code>assets/icons/coffee.svg</code></td></tr>
+<tr><td>Grilled Veg Sandwich</td><td><code>assets/icons/sandwhich.svg</code></td><td><code>assets/icons/sandwich.svg</code></td></tr>
+<tr><td>Choco Chip Muffin</td><td><code>assets/muffin.svg</code></td><td><code>assets/icons/muffin.svg</code></td></tr>
+<tr><td>Fresh Orange Juice</td><td><code>assets/icons/fresh-juice.svg</code></td><td><code>assets/icons/juice.svg</code></td></tr>
+</table>
+<p>These corrections replace nonexistent names or directories with the actual SVG files included in <code>assets/icons/</code>.</p>
+
+<h3>Bug 5: Incorrect Script Loading Order</h3>
+<p><strong>File:</strong> <code>index.html:53-54</code></p>
+<p><code>app.js</code> depends on the <code>MENU_ITEMS</code> constant declared in <code>menuData.js</code>. The scripts must load in dependency order.</p>
+<pre>&lt;script src="scripts/menuData.js"&gt;&lt;/script&gt;
+&lt;script src="scripts/app.js"&gt;&lt;/script&gt;</pre>
+<p>Loading the data script first prevents menu initialization from referencing an undefined constant.</p>
+
+<h3>Bug 6: Only the First Add-to-Cart Button Received a Listener</h3>
+<p><strong>File:</strong> <code>scripts/app.js:30-34</code></p>
+<table>
+<tr><th>Previous Code</th><th>Corrected Code</th></tr>
+<tr><td><code>document.querySelector(".add-btn")</code></td><td><code>menuGrid.querySelectorAll(".add-btn")</code></td></tr>
+</table>
+<p><code>querySelector()</code> returned only the first matching button, leaving every remaining menu card unbound. <code>querySelectorAll()</code> attaches an individual listener to every rendered card.</p>
+
+<h3>Bug 7: Repeated Items Created Duplicate Rows</h3>
+<p><strong>File:</strong> <code>scripts/app.js:36-53</code></p>
+<p>The original implementation always executed <code>cart.push()</code>. The corrected implementation searches for an existing item ID, increments its quantity, and creates a new row only when the item is new.</p>
+<pre>const existing = cart.find((item) =&gt; item.id === itemId);
+if (existing) {
+  existing.qty += 1;
+} else {
+  cart.push({ id: found.id, name: found.name,
+             price: Number(found.price), qty: 1 });
+}</pre>
+
+<h3>Bug 8: Cart and Checkout Arithmetic Used Strings or Ignored Quantity</h3>
+<p><strong>Files:</strong> <code>scripts/app.js:95-98</code>, <code>scripts/checkout.js:11,39-45</code></p>
+<p>Menu prices are defined as strings. String concatenation or arithmetic that ignored quantity could produce incorrect totals. The corrected code converts prices with <code>Number()</code>, multiplies price by quantity, and formats output using <code>toFixed(2)</code>.</p>
+<pre>const subtotal = cart.reduce(
+  (sum, item) =&gt; sum + Number(item.price) * item.qty, 0
+);</pre>
+
+<h3>Bug 9: Cart Badge Used the Number of Rows Instead of Units</h3>
+<p><strong>File:</strong> <code>scripts/app.js:96-98</code></p>
+<p><code>cart.length</code> counts distinct product lines. The badge now sums item quantities so that, for example, two units of one item and one unit of another display a count of three.</p>
+
+<h3>Bug 10: Cart Quantity Controls Were Missing</h3>
+<p><strong>File:</strong> <code>scripts/app.js:63-93</code></p>
+<p>The original cart showed text quantities but provided no interactive controls. The corrected rendering adds <code>+</code> and <code>-</code> buttons. The <code>-</code> button removes an item when its quantity becomes zero.</p>
+
+<h3>Bug 11: Category and Search Filtering Were Missing</h3>
+<p><strong>File:</strong> <code>scripts/app.js:100-123</code></p>
+<p>The original source contained TODO placeholders. The fixed implementation combines an active category with a case-insensitive name search. Category buttons also receive the <code>active</code> state.</p>
+
+<h3>Bug 12: Empty Cart Could Navigate to Checkout</h3>
+<p><strong>File:</strong> <code>scripts/app.js:125-132</code></p>
+<p>The original button navigated unconditionally. The corrected handler checks <code>cart.length</code>, displays a useful message, and prevents navigation when the cart is empty.</p>
+
+<h3>Bug 13: Cart Storage Keys Did Not Match</h3>
+<p><strong>Files:</strong> <code>scripts/app.js:10,61,129</code>; <code>scripts/checkout.js:16</code></p>
+<table>
+<tr><th>Previous State</th><th>Fixed State</th></tr>
+<tr><td>Menu: <code>campus_cart</code><br>Checkout: <code>cartItems</code></td><td>Both pages: <code>campus_cart</code></td></tr>
+</table>
+<p>Checkout could not read items saved by the menu because the local-storage keys differed. Standardizing the key allows the cart to persist across navigation.</p>
+
+<h3>Bug 14: Grand-Total Element ID Mismatch</h3>
+<p><strong>Files:</strong> <code>pages/checkout.html:44</code>; <code>scripts/checkout.js:5</code></p>
+<p>The JavaScript selected <code>total-amount</code>, while the markup provided <code>grand-total</code>. The markup was corrected to use <code>id="total-amount"</code>, allowing the grand total to be written into the visible element.</p>
+
+<h3>Bug 15: Student Promotion Logic Was Missing</h3>
+<p><strong>File:</strong> <code>scripts/checkout.js:50-68</code></p>
+<p>The original handler was a TODO and always returned a placeholder message. The fixed implementation:</p>
+<ul>
+<li>Trims and uppercases the entered code.</li>
+<li>Resets discount to zero before validating.</li>
+<li>Rejects invalid codes.</li>
+<li>Requires a subtotal of at least ₹150.</li>
+<li>Applies a 15 percent discount for eligible orders.</li>
+<li>Re-renders the totals and provides success or error feedback.</li>
+</ul>
+
+<h3>Bug 16: Order Confirmation Validation Was Missing</h3>
+<p><strong>File:</strong> <code>scripts/checkout.js:70-94</code></p>
+<p>The original handler did not validate an empty cart or student details. It also used an incorrect <code>preventEvent()</code> call in the recovered snapshot. The corrected implementation uses <code>preventDefault()</code>, rejects empty carts and blank required fields, generates an order ID, clears <code>campus_cart</code>, and rerenders checkout.</p>
+
+<h2 class="section">4. Before-and-After Comparison Summary</h2>
+<table>
+<tr><th>Area</th><th>Previous State</th><th>Fixed State</th><th>Reason</th></tr>
+<tr><td>Home stylesheet</td><td><code>css/main.css</code></td><td><code>styles/main.css</code></td><td>Correct existing directory</td></tr>
+<tr><td>Script loading</td><td>Menu script and app dependency misordered or mispathed</td><td><code>menuData.js</code>, then <code>app.js</code></td><td>Declare menu data first</td></tr>
+<tr><td>Checkout paths</td><td>Relative paths assumed project root</td><td>Paths include <code>../</code></td><td>Checkout is in <code>pages/</code></td></tr>
+<tr><td>Icons</td><td>Missing or misspelled paths</td><td>Existing SVG files in <code>assets/icons/</code></td><td>Load actual assets</td></tr>
+<tr><td>Add buttons</td><td>Only first button selected</td><td>Every button bound</td><td>Support all menu cards</td></tr>
+<tr><td>Duplicate products</td><td>New row appended</td><td>Existing quantity incremented</td><td>Prevent duplicate rows</td></tr>
+<tr><td>Subtotal</td><td>String or quantity-unaware arithmetic</td><td>Numeric price multiplied by quantity</td><td>Correct monetary calculations</td></tr>
+<tr><td>Cart badge</td><td>Number of rows</td><td>Sum of quantities</td><td>Represent total units</td></tr>
+<tr><td>Filters</td><td>TODO placeholder</td><td>Combined category and search filtering</td><td>Complete menu navigation</td></tr>
+<tr><td>Quantity controls</td><td>None</td><td>Plus/minus controls and removal</td><td>Interactive cart management</td></tr>
+<tr><td>Empty checkout</td><td>Navigation allowed</td><td>Navigation blocked with message</td><td>Prevent empty orders</td></tr>
+<tr><td>Storage key</td><td><code>campus_cart</code> versus <code>cartItems</code></td><td><code>campus_cart</code> on both pages</td><td>Share cart state</td></tr>
+<tr><td>Grand total</td><td>ID mismatch</td><td><code>total-amount</code> on both sides</td><td>Display calculated value</td></tr>
+<tr><td>Promotion</td><td>TODO placeholder</td><td>Validated STUDENT15 behavior</td><td>Apply rules accurately</td></tr>
+<tr><td>Confirmation</td><td>TODO placeholder</td><td>Validation, ID, and clearing</td><td>Complete order workflow</td></tr>
+</table>
+
+<h2 class="section">5. Testing and Validation</h2>
+<h3>5.1 Available Tests</h3>
+<p>No package manifest, test framework configuration, or source test files were found. Therefore, no unit or automated test command existed for this project.</p>
+
+<h3>5.2 Executed Validation</h3>
+<table>
+<tr><th>Method</th><th>Test or Observation</th><th>Result</th></tr>
+<tr><td>VS Code diagnostics</td><td><code>index.html</code>, checkout HTML, <code>app.js</code>, and <code>checkout.js</code></td><td>No errors reported</td></tr>
+<tr><td>Browser page load</td><td>Loaded the menu page</td><td>All four cards rendered</td></tr>
+<tr><td>Repeated add</td><td>Added Cold Brew twice</td><td>Quantity 2, no duplicate row, subtotal ₹240.00</td></tr>
+<tr><td>Mixed cart</td><td>Added Grilled Veg Sandwich</td><td>Badge 3 items, subtotal ₹325.00</td></tr>
+<tr><td>Checkout navigation</td><td>Opened checkout</td><td>Both saved items appeared</td></tr>
+<tr><td>Initial totals</td><td>Checked checkout summary</td><td>Subtotal ₹325.00, GST ₹16.25, total ₹341.25</td></tr>
+<tr><td>Promo</td><td>Applied <code>STUDENT15</code></td><td>Discount ₹48.75, total ₹292.50</td></tr>
+<tr><td>Blank student details</td><td>Submitted the form</td><td>Required-name and roll-number message displayed</td></tr>
+<tr><td>Valid order</td><td>Entered both details and submitted</td><td>Order ID displayed and cart cleared</td></tr>
+<tr><td>Combined filter</td><td>Selected Drinks and searched "orange"</td><td>Only Fresh Orange Juice remained</td></tr>
+<tr><td>Empty checkout</td><td>Clicked checkout with empty cart</td><td>Error displayed and navigation blocked</td></tr>
+</table>
+
+<h3>5.3 Syntax and Git Limitations</h3>
+<p>A <code>node --check</code> syntax check was attempted for the JavaScript files, but the VS Code terminal could not launch. Git state and commit history were also unavailable. These limitations are recorded rather than presented as successful test results.</p>
+
+<h3>5.4 Residual Testing Gaps</h3>
+<ul>
+<li>No formal automated test suite was available.</li>
+<li>Invalid promo codes and sub-₹150 promo behavior were implemented but were not separately executed in the final browser pass.</li>
+<li>Minus-to-zero removal and direct quantity persistence should be covered by future automated tests.</li>
+</ul>
+
+<h2 class="section">6. Reflection on Workspace-Aware AI</h2>
+<p>Pasting a single file into a standard online chat window removes the surrounding project context. The assistant cannot directly inspect sibling files, verify that a directory or asset exists, trace script dependencies, read browser storage behavior across pages, or interact with the running application. A workspace-aware AI tool such as GitHub Copilot can search and read the connected workspace, understand the relationship among HTML, JavaScript, CSS, assets, and local storage, and validate changes through an integrated editor and browser workflow.</p>
+
+<h2 class="section">7. Conclusion</h2>
+<p>The CampusCafe project was corrected across resource loading, cart behavior, filtering, checkout persistence, promotion handling, and order validation. The implementation now preserves the cart between the menu and checkout pages and presents consistent numeric totals.</p>
+<p>The most important structural corrections were matching script and element IDs across files and standardizing the <code>campus_cart</code> local-storage key. GitHub Copilot was used as an AI-assisted implementation and validation tool. The source code was not modified as part of the documentation process beyond the earlier bug-fix session.</p>
+<p class="small">Documentation report consolidated from README.md, BUG_ANALYSIS.md, BEFORE_AFTER_COMPARISON.md, TESTING_REPORT.md, and FINAL_REPORT.md.</p>
+</body>
+</html>
